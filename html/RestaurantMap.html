@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Finding your favorites</title>
+    <script type="application/javascript" src="../akhetan1.github.io/js/testFile.js"></script>
+    <script type="application/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places"></script>
+    <style>
+        #map-canvas {
+            width:500px;
+            height:400px;
+            background-color: ghostwhite;
+        }
+    </style>
+</head>
+<body onload="initialize()">
+    <h1>Bookmarked restaurants</h1>
+    <p id="List"></p>
+    <script>displayList()</script>
+    <br>
+    <p>Add or remove a restaurant from the list</p>
+    <input id ="restaurantInput", onkeypress="addRemoveRestaurant(event)">
+    <h1>Locate your bookmarked restaurants by location</h1>
+    <p>Enter a city, address, or neighborhood you are searching within</p>
+    <input id="inputField", type="text" placeholder="Enter a location">
+    <br>
+    <br>
+    <div id="map-canvas"></div>
+    <br> <br>
+
+</body>
+</html>
