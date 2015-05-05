@@ -1,0 +1,63 @@
+body {
+    background: #f8f8f8 url(../images/foodiesfeed.com__DSC0066.jpg);
+    background-size: 100% auto;
+    font-family: 'PT Sans', Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: #555;
+    text-align: left;
+    height: 100%;
+    width: 100%;
+}
+
+h1{
+    padding-left: 8.3%;
+}
+
+input {
+    color: black;
+}
+
+#map-canvas {
+     display: block;
+     width: 100%;
+     height:58vh;
+     background-color: ghostwhite;
+ }
+
+
+<!-- overlay square -->
+.overlay-pattern {
+    margin-top: 30 px;
+    height: 85vh;
+    padding-bottom: 30px;
+    padding-bottom: 30px;
+    background-image: url(../images/pattern-2.png);
+    -moz-box-shadow: 0 1px 5px 0 rgba(0,0,0,.3) inset;
+    -webkit-box-shadow: 0 1px 5px 0 rgba(0,0,0,.3) inset;
+    box-shadow: 0 1px 5px 0 rgba(0,0,0,.3) inset;
+}
+.overlay {
+    margin-top: 30px;
+    padding-bottom: 30px;
+    height: 85vh;
+    color: #fff;
+    background: #2d2d2d; /* browsers that don't support rgba */
+    background: rgba(45,45,45,.7);
+    -moz-border-radius-topleft: 8px;
+    -moz-border-radius-topright: 8px;
+    -webkit-border-top-left-radius: 8px;
+    -webkit-border-top-right-radius: 8px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+
+.scroller {
+    height: 56vh;
+    padding: 10px;
+    display: block;
+    margin-right: 20%;
+    overflow-x: hidden;
+    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+}

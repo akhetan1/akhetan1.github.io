@@ -61,7 +61,7 @@ function displayList(){
     var list ='';
     for(var i in restaurantList){
         list+=restaurantList[i];
-        list+=", ";
+        list+="<br>";
     }
     document.getElementById("List").innerHTML = list;
 }
