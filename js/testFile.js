@@ -16,6 +16,7 @@ function initialize(){
     }
     map=new google.maps.Map(mapCanvas, mapOptions);
     var input = document.getElementById("inputField");
+    map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
     autocomplete = new google.maps.places.Autocomplete(input);
 
     autocomplete.bindTo('bounds', map);
