@@ -14,11 +14,33 @@ h1{
     padding-left: 8.3%;
 }
 
-button, input, select, textarea {
+.form-control {
+    position: relative;
+    z-index: 2;
+    float:left;
+    margin-bottom:0;
+    padding: 0px;
+    background-color: #2d2d2d;
+    color: #ffffff;
+}
+
+.input-group .form-control {
+    position: relative;
+    z-index: 2;
+    float: left;
+    width: auto;
+    margin-bottom: 0;
+    padding: 5px;
+}
+
+button, input, textarea {
     color: black;
     padding: 0px;
 }
 
+a{
+    color: #868686;
+}
 #map-canvas {
      display: block;
      width: 100%;
@@ -37,6 +59,18 @@ button, input, select, textarea {
     text-overflow: ellipsis;
     width: 50%;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+#reservationsSearch {
+    margin-left: 5px;
+    background-color: hsl(0, 0%, 79%) !important;
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#134134134", endColorstr="#c9c9c9");
+    background-image: -webkit-linear-gradient(top, #868686, #c9c9c9);
+    border-color:#868686;
+    color: #333 !important;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.69);
+    -webkit-font-smoothing: antialiased;
 }
 
 <!-- overlay square -->
