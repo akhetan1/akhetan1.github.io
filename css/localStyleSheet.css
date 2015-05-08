@@ -41,6 +41,17 @@ button, input, textarea {
 a{
     color: #868686;
 }
+
+table, td {
+    padding-right: 12px;
+    padding-top: 10px;
+    line-height: 1.1;
+}
+
+ul{
+    margin: 0;
+    padding: 0;
+}
 #map-canvas {
      display: block;
      width: 100%;

@@ -46,7 +46,7 @@
                                             <input id ="restaurantInput", onkeypress="addRemoveRestaurant(event)">
                                             <br>
                                             <div class="scroller">
-                                                <p id="List"></p>
+                                                <ul id="List"></ul>
                                             </div>
                                         </div>
                                         <div class="tab-pane well" id="reservations">
@@ -120,7 +120,7 @@
                                                 </button>
                                             </div>
                                             <br>
-                                            <p id="reservationTimes"> </p>
+                                            <table style="list-style-type:none" id="reservationTimes"> </table>
                                             <div id="progress" style="display:none">
                                                 <img src="../images/ajax-loader.gif" alt="Loading please wait..." style="display:block; margin: 0 auto"/>
                                                 <span style="margin:auto; display:table">Please wait while loading available reservations...</span>

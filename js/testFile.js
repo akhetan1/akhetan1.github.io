@@ -61,8 +61,9 @@ function displayList(){
     tempRestaurantList = restaurantList.slice(0);
     var list ='';
     for(var i in restaurantList){
+        list+="<li>";
         list+=restaurantList[i];
-        list+="<br>";
+        list+="</li>";
     }
     document.getElementById("List").innerHTML = list;
 }
@@ -159,7 +160,7 @@ function searchAvailability(){
     var partySize = document.getElementById("partySize").value;
     var date = document.getElementById("datePicker").value;
     var time = document.getElementById("time").value;
-    var url = "http://localhost:1234/?partySize=" + partySize + "&date=" + date + "&time=" + time;
+    var url = "http://nodejs-akhetan.rhcloud.com/?partySize=" + partySize + "&date=" + date + "&time=" + time;
 
     //show the spinner as results load
     $('#progress').show();
@@ -183,28 +184,34 @@ var myCallback = function(data) {
     //get the json objects for each request
     var responseArray = JSON.parse(data);
 
-    //search each request
-    var outputStr = "";
-    var lookup = {};
-
-    for (var i = 0; i < responseArray[0].Results.Restaurants.length; i++) {
-        lookup[responseArray[0].Results.Restaurants[i].Name] = responseArray[0].Results.Restaurants[i];
+    if(responseArray[0] == "No search results"){
+        $('#progress').hide();
+        document.getElementById("reservationTimes").innerHTML =responseArray[0];
     }
+    else {
+        //search each request
+        var outputStr = "";
+        var lookup = {};
 
-    restaurantList.forEach(function (restaurant) {
-        if (lookup.hasOwnProperty(restaurant)) {
-            outputStr = outputStr + restaurant + ": ";
-            for (var i in lookup[restaurant].TimeSlots) {
-                if(lookup[restaurant].TimeSlots[i].IsAvail == true) {
-                    var tempStr = lookup[restaurant].TimeSlots[i].TimeString;
-                    var tempArray = tempStr.split(" ");
-                    outputStr = outputStr + tempArray[0] + "   ";
-                }
-            }
-            outputStr += "<br>";
-            highlightMarker(restaurant);
+        for (var i = 0; i < responseArray[0].Results.Restaurants.length; i++) {
+            lookup[responseArray[0].Results.Restaurants[i].Name] = responseArray[0].Results.Restaurants[i];
         }
-    });
-    $('#progress').hide();
-    document.getElementById("reservationTimes").innerHTML = outputStr;
+
+        restaurantList.forEach(function (restaurant) {
+            if (lookup.hasOwnProperty(restaurant)) {
+                outputStr = outputStr + "<tr> <td><b>" + restaurant + ":</b></td> ";
+                for (var i in lookup[restaurant].TimeSlots) {
+                    if (lookup[restaurant].TimeSlots[i].IsAvail == true) {
+                        var tempStr = lookup[restaurant].TimeSlots[i].TimeString;
+                        var tempArray = tempStr.split(" ");
+                        outputStr = outputStr + "<td>"+ tempArray[0] + "</td>";
+                    }
+                }
+                outputStr += "</tr>";
+                highlightMarker(restaurant);
+            }
+        });
+        $('#progress').hide();
+        document.getElementById("reservationTimes").innerHTML = outputStr;
+    }
 }
