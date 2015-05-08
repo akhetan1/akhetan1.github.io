@@ -175,6 +175,8 @@ function searchAvailability(){
         error: function(xhr, ajaxOptions, thrownError) {
             console.log("Error status on callback: " + xhr.status);
             console.log("Error thrown: " + thrownError);
+            $('#progress').hide();
+            document.getElementById("reservationTimes").innerHTML = "Server Error (" + xhr.status + ")";
         }
     });
 
