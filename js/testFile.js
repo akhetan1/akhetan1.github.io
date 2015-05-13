@@ -1,4 +1,4 @@
-var restaurantList = ["Acquerello","All Spice - San Francisco","Atelier Crenn","Bar Tartine","Campton Place","COI Restaurant","Coqueta","Cotogna","Delfina Restaurant","Flour + Water", "Frances","Gary Danko","Hong Kong Lounge II", "Kokkari Estiatorio","Market & Rye","Padrecito", "Piccino", "Range", "Rich Table", "State Bird Provisions", "Sons & Daughters", "The Progress", ];
+var restaurantList = ["Acquerello","Al's Place", "All Spice - San Francisco","Atelier Crenn","Bar Tartine","Campton Place","COI Restaurant","Coqueta","Cotogna","Delfina Restaurant","Flour + Water", "Frances","Gary Danko","Hong Kong Lounge II", "Kokkari Estiatorio","Market & Rye","Octavia", "Padrecito", "Piccino", "Range", "Rich Table", "State Bird Provisions", "Sons & Daughters", "The Progress", ];
 var tempRestaurantList;
 var defaultLocation;
 var map;
@@ -194,6 +194,7 @@ var myCallback = function(data) {
         //search each request
         var outputStr = "";
         var lookup = {};
+        var partySize = document.getElementById("partySize").value;
 
         for (var i = 0; i < responseArray[0].Results.Restaurants.length; i++) {
             lookup[responseArray[0].Results.Restaurants[i].Name] = responseArray[0].Results.Restaurants[i];
@@ -202,11 +203,13 @@ var myCallback = function(data) {
         restaurantList.forEach(function (restaurant) {
             if (lookup.hasOwnProperty(restaurant)) {
                 outputStr = outputStr + "<tr> <td><b>" + restaurant + ":</b></td> ";
+                var checksum = parseInt(lookup[restaurant].Id) + parseInt(partySize) + 123;
                 for (var i in lookup[restaurant].TimeSlots) {
                     if (lookup[restaurant].TimeSlots[i].IsAvail == true) {
                         var tempStr = lookup[restaurant].TimeSlots[i].TimeString;
                         var tempArray = tempStr.split(" ");
-                        outputStr = outputStr + "<td>"+ tempArray[0] + "</td>";
+                        var reservationUrl = "http://www.opentable.com/httphandlers/ValidateReservationRequest.ashx?rid=" + lookup[restaurant].Id + "&d=" + encodeURI(lookup[restaurant].TimeSlots[i].LinkString)+ "&p="+partySize + "&checksum=" + checksum;
+                        outputStr = outputStr + "<td><a href='" + reservationUrl + "'>"+ tempArray[0] + "</a></td>";
                     }
                 }
                 outputStr += "</tr>";
