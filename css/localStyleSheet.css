@@ -1,3 +1,7 @@
+html {
+    height: 100%;
+}
+
 body {
     background: #f8f8f8 url(../images/foodiesfeed.com__DSC0066.jpg);
     background-size: 100% auto;
@@ -31,9 +35,10 @@ h1{
     width: auto;
     margin-bottom: 0;
     padding: 5px;
+    border-radius: 0px;
 }
 
-button, input, textarea {
+input, textarea {
     color: black;
     padding: 0px;
 }
@@ -55,7 +60,7 @@ ul{
 #map-canvas {
      display: block;
      width: 100%;
-     height:65vh;
+     height: 65vh;
      background-color: ghostwhite;
  }
 
@@ -98,8 +103,8 @@ ul{
 .overlay {
     margin-top: 30px;
     padding-bottom: 30px;
-    height: 85vh;
     color: #fff;
+    height: 100%;
     background: #2d2d2d; /* browsers that don't support rgba */
     background: rgba(45,45,45,.7);
     -moz-border-radius-topleft: 8px;
@@ -110,24 +115,34 @@ ul{
     border-top-right-radius: 8px;
 }
 
-
-.scroller {
-    height: 45vh;
-    padding: 10px;
-    display: block;
-    overflow-x: hidden;
-    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
-}
-
-
 .well{
     height: 59.8vh;
     background-color: #2d2d2d;
     border: 0px;
 }
 
+#scroller {
+    height: 80%;
+    padding: 10px;
+    display: block;
+    overflow-x: hidden;
+    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+}
+
+#scroller2 {
+    height: 80%;
+    padding: 10px;
+    display: block;
+    overflow-x: hidden;
+    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+}
+
 .panel {
     background-color: #2d2d2d;
-    height: 59.8vh;
+    height: 65vh;
     border: 0px;
+}
+
+.row {
+    height: 100%;
 }

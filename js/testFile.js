@@ -13,7 +13,7 @@ function initialize(){
         center: defaultLocation,
         zoom: 12,
         mapTypeId: google.maps.MapTypeId.ROADMAP
-    }
+    };
     map=new google.maps.Map(mapCanvas, mapOptions);
     var input = document.getElementById("inputField");
     map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
@@ -33,7 +33,7 @@ function initialize(){
             map.setCenter(place.geometry.location);
             map.setZoom(15);
         }
-    })
+    });
     displayList();
     getPlacesFromGoogle();
 }
@@ -54,7 +54,6 @@ function addRemoveRestaurant(e){
             displayList();
         }
     }
-    return;
 }
 
 function displayList(){
@@ -209,7 +208,7 @@ var myCallback = function(data) {
                         var tempStr = lookup[restaurant].TimeSlots[i].TimeString;
                         var tempArray = tempStr.split(" ");
                         var reservationUrl = "http://www.opentable.com/httphandlers/ValidateReservationRequest.ashx?rid=" + lookup[restaurant].Id + "&d=" + encodeURI(lookup[restaurant].TimeSlots[i].LinkString)+ "&p="+partySize + "&checksum=" + checksum;
-                        outputStr = outputStr + "<td><a href='" + reservationUrl + "'>"+ tempArray[0] + "</a></td>";
+                        outputStr = outputStr + "<td><a href='" + reservationUrl + "'target='_blank'>"+ tempArray[0] + "</a></td>";
                     }
                 }
                 outputStr += "</tr>";
