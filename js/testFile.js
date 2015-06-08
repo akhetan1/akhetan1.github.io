@@ -103,6 +103,7 @@ function addRemoveRestaurant(){
             }
         });
     }
+    document.getElementById("restaurantInput").value = "";
 }
 
 function resetModalFields(){
@@ -144,6 +145,7 @@ function createNewList(){
 function writeFileCallback(){
     lists.push(listName);
     restaurantList = [];
+    restaurantsInMetro = [];
     recenterMap();
     loadListOptions();
     displayList();
@@ -165,7 +167,7 @@ function deleteList() {
             url: url,
             dataType: "text",
             crossDomain: true,
-            success: deleteListCallback,
+            success: deleteListCallback(deleteList),
             error: function(xhr, ajaxOptions, thrownError) {
                 console.log("error thrown: " + thrownError);
             }
@@ -173,9 +175,18 @@ function deleteList() {
     }
 }
 
-function deleteListCallback(){
+function deleteListCallback(deleteList){
+    document.getElementById("deleteListName").value = "";
     $('#deleteModal').modal('hide');
     loadListOptions();
+    if(listName == deleteList){
+        listName = "";
+        removeAllMarkers();
+        center = new google.maps.LatLng (39.5, -98.35);
+        map.panTo(center);
+        map.setZoom(3);
+
+    }
 }
 
 function loadListOptions(){
@@ -201,7 +212,6 @@ var returnOptionsCallback = function(data) {
     for (var i in lists) {
         listOptions = listOptions + "<li class = 'tag' onclick = 'loadList(\"" + lists[i] +"\")'> <span>" + lists[i] + "</span></button></li>";
     }
-
     document.getElementById("fileList").innerHTML = listOptions;
 };
 
