@@ -5,12 +5,15 @@
         <title>Favorite finder</title>
         <script type="application/javascript" src="../js/testFile.js"></script>
         <script type="application/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 
         <!-- CSS -->
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
         <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
         <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
         <link rel="stylesheet" type="text/css" href="../css/localStyleSheet.css">
+
 
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -31,13 +34,191 @@
                         <div class = "col-xs-7.5 col-md-5">
                             <div class="panel">
                                 <ul class="nav nav-tabs" id="myTab">
-                                    <li class="active"><a href="#favorites" data-toggle="tab">Favorites list</a></li>
-                                    <li><a href="#reservations" data-toggle="tab">Reservation finder</a></li>
+                                    <li class = "active"><a href="#choose" data-toggle="tab">Lists</a></li>
+                                    <li><a href="#favorites" data-toggle="tab">Restaurants</a></li>
+                                    <li><a href="#reservations" data-toggle="tab">Reservations</a></li>
                                 </ul>
                                 <div class="tab-content">
-                                    <div class="tab-pane active well" id="favorites">
+                                    <div class = "tab-pane active well" id="choose">
+                                        <div class = "tags-section">
+                                            <ol class = "tags group" id="fileList"></ol>
+                                        </div>
+                                        <button id = "create"  type="button" class="btn btn-default btn-md" data-toggle="modal" data-target="#createModal" onclick="resetModalFields()"> Create new list </button>
+                                        <button id = "delete"  type="button" class="btn btn-default btn-md" data-toggle="modal" data-target="#deleteModal"> Delete list </button>
+                                        <!-- launch modal dialog to create new list -->
+                                        <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                        <h4 class="modal-title" id="deleteModalLabel">Delete list</h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <b>List to be deleted:</b>
+                                                        <input id="deleteListName" placeholder ="list name">
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-primary" onclick = "deleteList()">Delete list</button>
+                                                        <div id = "deleteError"> </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- launch modal dialog to create new list -->
+                                        <div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                        <h4 class="modal-title" id="createModalLabel">Create new list</h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <b>List name:</b>
+                                                        <input id="listName" placeholder ="Name your list">
+                                                        <br>
+                                                        <b>City:</b>
+                                                        <select id ="city">
+                                                            <option value="" disabled selected>Choose city</option>
+                                                            <option value="45">Alabama</option>
+                                                            <option value="212">Anchorage</option>
+                                                            <option value="99">Asheville / W. North Carolina</option>
+                                                            <option value="16">Atlanta / Georgia</option>
+                                                            <option value="274">Atlantic Canada</option>
+                                                            <option value="89">Atlantic City / South Jersey Shore</option>
+                                                            <option value="33">Austin</option>
+                                                            <option value="18">Baltimore / Maryland</option>
+                                                            <option value="385">Beijing</option>
+                                                            <option value="337">Beirut</option>
+                                                            <option value="7">Boston / New England</option>
+                                                            <option value="77">Calgary / Southern Alberta</option>
+                                                            <option value="80">California Central Coast</option>
+                                                            <option value="215">Caribbean</option>
+                                                            <option value="43">Central Kentucky</option>
+                                                            <option value="421">Central Texas</option>
+                                                            <option value="31">Charlotte</option>
+                                                            <option value="3">Chicago / Illinois</option>
+                                                            <option value="90">Cincinnati / Dayton</option>
+                                                            <option value="52">Cleveland / Akron / Canton</option>
+                                                            <option value="104">Coastal North Carolina</option>
+                                                            <option value="94">Columbus</option>
+                                                            <option value="23">Corpus Christi / McAllen</option>
+                                                            <option value="412">Costa Rica</option>
+                                                            <option value="20">Dallas - Fort Worth</option>
+                                                            <option value="5">Denver / Colorado</option>
+                                                            <option value="38">Detroit / Eastern Michigan</option>
+                                                            <option value="319">Dubai</option>
+                                                            <option value="248">East Tennessee</option>
+                                                            <option value="418">East Texas</option>
+                                                            <option value="27">Edmonton / Northern Alberta</option>
+                                                            <option value="56">El Paso</option>
+                                                            <option value="433">Fayetteville / Northwest Arkansas</option>
+                                                            <option value="224">France</option>
+                                                            <option value="391">Fresno / San Joaquin Valley</option>
+                                                            <option value="367">Grand Rapids / Western Michigan</option>
+                                                            <option value="100">Greensboro / Winston Salem / Highpoint</option>
+                                                            <option value="34">Hawaii</option>
+                                                            <option value="65">Hong Kong / Macau</option>
+                                                            <option value="12">Houston</option>
+                                                            <option value="69">Idaho</option>
+                                                            <option value="44">Indiana</option>
+                                                            <option value="245">Indonesia</option>
+                                                            <option value="68">Iowa</option>
+                                                            <option value="415">Istanbul / Turkey</option>
+                                                            <option value="382">Italy</option>
+                                                            <option value="97">Jackson Hole / Wyoming</option>
+                                                            <option value="83">Jacksonville / Northeast Florida</option>
+                                                            <option value="87">Kansas City</option>
+                                                            <option value="85">Key West / Florida Keys</option>
+                                                            <option value="230">Lake of the Ozarks</option>
+                                                            <option value="10">Las Vegas</option>
+                                                            <option value="95">Little Rock</option>
+                                                            <option value="6">Los Angeles / Orange County</option>
+                                                            <option value="343">Malaysia</option>
+                                                            <option value="251">Memphis</option>
+                                                            <option value="17">Miami / Southeast Florida</option>
+                                                            <option value="46">Minneapolis - St. Paul</option>
+                                                            <option value="227">Mississippi</option>
+                                                            <option value="436">Mobile</option>
+                                                            <option value="454">Monaco</option>
+                                                            <option value="98">Montana</option>
+                                                            <option value="75">Montreal / Quebec</option>
+                                                            <option value="481">Nairobi</option>
+                                                            <option value="30">Nashville</option>
+                                                            <option value="70">Nebraska</option>
+                                                            <option value="42">New Mexico</option>
+                                                            <option value="14">New Orleans / Louisiana</option>
+                                                            <option value="8">New York / Tri-State Area</option>
+                                                            <option value="295">North Dakota</option>
+                                                            <option value="370">Northern Michigan / Upper Peninsula    </option>
+                                                            <option value="82">Northwest Florida</option>
+                                                            <option value="36">Oklahoma City</option>
+                                                            <option value="28">Orlando / Central Florida East</option>
+                                                            <option value="406">Ottawa</option>
+                                                            <option value="81">Palm Springs / Palm Desert Cities</option>
+                                                            <option value="403">Panama City</option>
+                                                            <option value="13">Philadelphia / New Jersey Suburbs</option>
+                                                            <option value="50">Phoenix / Arizona</option>
+                                                            <option value="101">Pinehurst</option>
+                                                            <option value="62">Pittsburgh</option>
+                                                            <option value="11">Portland / Oregon</option>
+                                                            <option value="236">Portugal</option>
+                                                            <option value="22">Raleigh / Durham / Chapel Hill</option>
+                                                            <option value="35">Sacramento / Sacramento Valley</option>
+                                                            <option value="19">San Antonio</option>
+                                                            <option value="15">San Diego</option>
+                                                            <option value="4">San Francisco Bay Area</option>
+                                                            <option value="487">San Salvador</option>
+                                                            <option value="451">Saskatoon / Saskatchewan</option>
+                                                            <option value="400">Saudi Arabia</option>
+                                                            <option value="427">Savannah</option>
+                                                            <option value="379">Scranton / Poconos</option>
+                                                            <option value="2">Seattle / Eastern Washington</option>
+                                                            <option value="242">Shanghai</option>
+                                                            <option value="394">Shenzhen</option>
+                                                            <option value="439">Shreveport</option>
+                                                            <option value="66">Singapore</option>
+                                                            <option value="91">South Carolina</option>
+                                                            <option value="254">South Dakota</option>
+                                                            <option value="86">Southwest Florida</option>
+                                                            <option value="325">Southwest Indiana / Tri-State Area</option>
+                                                            <option value="206">Spain</option>
+                                                            <option value="88">Springfield / Branson</option>
+                                                            <option value="48">St. Louis</option>
+                                                            <option value="233">Switzerland</option>
+                                                            <option value="79">Tahoe / Reno Area</option>
+                                                            <option value="84">Tampa / Central Florida West</option>
+                                                            <option value="322">Texas Panhandle</option>
+                                                            <option value="424">Texas Plains</option>
+                                                            <option value="96">Toledo</option>
+                                                            <option value="74">Toronto / Ontario</option>
+                                                            <option value="430">Tulsa</option>
+                                                            <option value="72">UK / London &amp; Ireland</option>
+                                                            <option value="21">Utah</option>
+                                                            <option value="73">Vancouver / British Columbia</option>
+                                                            <option value="92">Virginia</option>
+                                                            <option value="9">Washington, D.C. Area</option>
+                                                            <option value="257">West Virginia</option>
+                                                            <option value="445">Western Kentucky</option>
+                                                            <option value="54">Winnipeg / Manitoba</option>
+                                                            <option value="26">Wisconsin</option>
+                                                            <option value="397">Yosemite / Mammoth Lakes</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-primary" onclick = "createNewList()">Create list</button>
+                                                        <div id = "saveError"> </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane well" id="favorites">
                                         <h4><b>Add or remove a restaurant to the favorites list</b></h4>
-                                        <input id ="restaurantInput", onkeypress="addRemoveRestaurant(event)">
+                                        <input id ="restaurantInput" onkeypress="enableAutocomplete()"> </input>
+                                        <button id="addRemove" type="button" class="btn btn-default btn-md" onclick="addRemoveRestaurant()">
+                                            <span class="glyphicon glyphicon-ok"></span>
+                                        </button>
                                         <br>
                                         <div id="scroller">
                                             <ul id="List"></ul>

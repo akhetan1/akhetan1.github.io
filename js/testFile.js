@@ -1,17 +1,23 @@
-var restaurantList = ["Acquerello","Al's Place", "All Spice - San Francisco","Atelier Crenn","Bar Tartine","Campton Place","COI Restaurant","Coqueta","Cotogna","Delfina Restaurant","Flour + Water", "Frances","Gary Danko","Hong Kong Lounge II", "Kokkari Estiatorio","Market & Rye","Octavia", "Padrecito", "Piccino", "Range", "Rich Table", "State Bird Provisions", "Sons & Daughters", "The Progress", ];
+var lists = [];
+var listName;
+var restaurantList = [];
 var tempRestaurantList;
-var defaultLocation;
+var center;
 var map;
 var autocomplete;
 var markerArray = [];
+var metroId;
+var restaurantsInMetro = [];
+var serverEndpoint = "http://nodejs-akhetan.rhcloud.com";
+//var serverEndpoint = "http://localhost:1234";
 
 
 function initialize(){
     var mapCanvas=document.getElementById("map-canvas");
-    defaultLocation= new google.maps.LatLng(37.774929, -122.419416);
+    center = new google.maps.LatLng (39.5, -98.35);
     var mapOptions = {
-        center: defaultLocation,
-        zoom: 12,
+        center: center,
+        zoom: 3,
         mapTypeId: google.maps.MapTypeId.ROADMAP
     };
     map=new google.maps.Map(mapCanvas, mapOptions);
@@ -35,45 +41,253 @@ function initialize(){
         }
     });
     displayList();
+    loadListOptions();
+}
+function enableAutocomplete(){
+    $( "#restaurantInput" ).autocomplete({
+        /*Source refers to the list of fruits that are available in the auto complete list. */
+        source:restaurantsInMetro,
+        /* auto focus true means, the first item in the auto complete list is selected by default. therefore when the user hits enter,
+         it will be loaded in the textbox */
+        autoFocus: true
+    });
+}
+
+function addRemoveRestaurant(){
+
+    if(listName == undefined) {
+        document.getElementById("List").innerHTML = "Please select or create a list";
+        return;
+    }
+    var restaurantName = document.getElementById("restaurantInput").value;
+    var url;
+
+    //add restaurant to list and write to server
+    if (restaurantList.indexOf(restaurantName) == -1){
+        url = serverEndpoint+"/addRestaurant?listName=" + listName + "&restaurantName="+restaurantName;
+        console.log(url);
+
+        $.ajax({
+            type: 'POST',
+            url: url,
+            dataType: "text",
+            data: restaurantName,
+            success: function(){
+                restaurantList.push(restaurantName);
+                displayList();
+                tempRestaurantList=[];
+                tempRestaurantList.push(restaurantName);
+                getPlacesFromGoogle();
+            },
+            error: function(xhr,ajaxOptions,thrownError){
+                console.log("error thrown: " + thrownError + " Status: " + JSON.stringify(xhr));
+            }
+        });
+    //remove restaurant from list and update server file
+    } else {
+        url = serverEndpoint + "/removeRestaurant?listName=" + listName + "&restaurantName=" +restaurantName;
+        console.log("Test1: " + restaurantList);
+        $.ajax({
+            type: 'POST',
+            url: url,
+            dataType: "text",
+            data: restaurantName,
+            success: function(){
+                var index = restaurantList.indexOf(restaurantName);
+                restaurantList.splice(index, 1);
+                removeMarker(restaurantName);
+                displayList();
+            },
+            error: function(xhr,ajaxOptions,thrownError){
+                console.log("error thrown: " + thrownError + " Status: " + JSON.stringify(xhr));
+            }
+        });
+    }
+}
+
+function resetModalFields(){
+    document.getElementById("listName").value = "";
+    document.getElementById("city").value = "";
+    document.getElementById("saveError").innerHTML = "";
+}
+
+function createNewList(){
+    var url = serverEndpoint + "/createNewList";
+    document.getElementById("saveError").innerHTML = "";
+    listName = document.getElementById("listName").value;
+    metroId = document.getElementById("city").value;
+
+    if(listName == "" || metroId == ""){
+        document.getElementById("saveError").innerHTML = "Please select a list name and city";
+    }
+    else if (lists.indexOf(listName) != -1){
+        document.getElementById("saveError").innerHTML = "A list with that name already exists.  Please try another";
+    }
+    else {
+        $('#createModal').modal('hide');
+        var listObject = {
+            metroId: metroId,
+            listName: listName
+         };
+        $.ajax({
+            type: 'POST',
+            url: url,
+            dataType: "text",
+            data: JSON.stringify(listObject),
+            success: writeFileCallback,
+            error: function(xhr,ajaxOptions,thrownError){
+                console.log("error thrown: " + thrownError + " Status: " + JSON.stringify(xhr));
+            }
+        });
+    }
+}
+function writeFileCallback(){
+    lists.push(listName);
+    restaurantList = [];
+    recenterMap();
+    loadListOptions();
+    displayList();
     getPlacesFromGoogle();
+    $('.nav-tabs a[href=#favorites]').tab('show');
 }
 
-function addRemoveRestaurant(e){
-    if (e.keyCode == 13){
-        var x = document.getElementById("restaurantInput").value;
-        if (restaurantList.indexOf(x) == -1){
-            restaurantList.push(x);
-            displayList();
-            tempRestaurantList=[];
-            tempRestaurantList.push(x);
-            getPlacesFromGoogle();
-        } else {
-            var index = restaurantList.indexOf(x);
-            restaurantList.splice(index, 1);
-            removeMarker(x);
-            displayList();
+function deleteList() {
+    document.getElementById("deleteError").innerHTML = "";
+    var deleteList = document.getElementById("deleteListName").value;
+    if(lists.indexOf(deleteList) <0 ) {
+        document.getElementById("deleteError").innerHTML = "Please pick a valid list to delete";
+    }
+    else {
+        console.log("Deleting " + deleteList);
+        var url = serverEndpoint + "/deleteList?filename=" + deleteList;
+        $.ajax({
+            type:'GET',
+            url: url,
+            dataType: "text",
+            crossDomain: true,
+            success: deleteListCallback,
+            error: function(xhr, ajaxOptions, thrownError) {
+                console.log("error thrown: " + thrownError);
+            }
+        })
+    }
+}
+
+function deleteListCallback(){
+    $('#deleteModal').modal('hide');
+    loadListOptions();
+}
+
+function loadListOptions(){
+    var url = serverEndpoint +"/loadListOptions";
+    $.ajax({
+        type:'GET',
+        url: url,
+        dataType: "text",
+        crossDomain: true,
+        success: returnOptionsCallback,
+        error: function(xhr, ajaxOptions, thrownError) {
+            console.log("error thrown: " + thrownError);
         }
+    })
+};
+
+
+var returnOptionsCallback = function(data) {
+    var str = data.replace(/.txt/g, "");
+    lists = str.split(",");
+    var listOptions = '';
+
+    for (var i in lists) {
+        listOptions = listOptions + "<li class = 'tag' onclick = 'loadList(\"" + lists[i] +"\")'> <span>" + lists[i] + "</span></button></li>";
     }
+
+    document.getElementById("fileList").innerHTML = listOptions;
+};
+
+
+function loadList(listname){
+    listName = listname;
+    var url = serverEndpoint +"/loadlist?listname=" + listName;
+    document.getElementById("reservationTimes").innerHTML = "";
+    restaurantsInMetro = [];
+    removeAllMarkers();
+    $.ajax({
+        type:'GET',
+        url: url,
+        dataType: "text",
+        crossDomain: true,
+        success: returnListCallback,
+        error: function(xhr, ajaxOptions, thrownError) {
+            console.log("error thrown: " + thrownError);
+        }
+    })
 }
 
-function displayList(){
-    tempRestaurantList = restaurantList.slice(0);
-    var list ='';
-    for(var i in restaurantList){
-        list+="<li>";
-        list+=restaurantList[i];
-        list+="</li>";
-    }
-    document.getElementById("List").innerHTML = list;
+var returnListCallback = function(data){
+    var responseArray = data.split(",");
+    metroId = responseArray[0];
+    console.log("In returnListcallback, metroId: " + metroId);
+    responseArray.shift();
+    restaurantList = responseArray.slice(0);
+    console.log(restaurantList);
+    displayList();
+    getPlacesFromGoogle();
+    recenterMap();
+    $('.nav-tabs a[href=#favorites]').tab('show');
 }
 
+function recenterMap() {
+    var url = serverEndpoint+"/centerMap?metroId=" + metroId;
+    $.ajax({
+        type: 'GET',
+        url: url,
+        dataType: "text",
+        crossDomain: true,
+        success: recenterCallback,
+        error: function (xhr, ajaxOptions, thrownError) {
+            console.log("Error status on callback: " + xhr.status);
+            console.log("Error thrown: " + thrownError);
+        }
+    });
+}
+
+var recenterCallback = function(data){
+    var responseArray = JSON.parse(data);
+    var lat = responseArray[0].Display.GeoLocation.Lat;
+    var lng = responseArray[0].Display.GeoLocation.Lon;
+    center = new google.maps.LatLng(lat, lng);
+    map.panTo(center);
+    map.setZoom(12);
+
+    //read in and store full list of restaurants
+    for (var i = 0; i < responseArray[0].Results.Restaurants.length; i++) {
+        restaurantsInMetro.push(responseArray[0].Results.Restaurants[i].Name);
+    }
+};
+
+function displayList() {
+    if(listName == ""){
+        document.getElementById("List").innerHTML = "Please select or create a new list";
+    }
+    else {
+        tempRestaurantList = restaurantList.slice(0);
+        var list = '';
+        for (var i in restaurantList) {
+            list += "<li>";
+            list += restaurantList[i];
+            list += "</li>";
+        }
+        document.getElementById("List").innerHTML = list;
+    }
+}
 
 function getPlacesFromGoogle() {
     var service;
 
-    if(tempRestaurantList.length > 0) {
+    if(tempRestaurantList.length > 0 && tempRestaurantList[0] != "") {
         var request = {
-            location: defaultLocation,
+            location: center,
             radius: '40',
             query: tempRestaurantList[0],
             types: ["restaurant", "food"]
@@ -101,7 +315,7 @@ function callback(results, status){
         setTimeout(getPlacesFromGoogle, 100);
         return;
     } else{
-        console.log("ERROR: Unhandled status of search for: " + status);
+        console.log(tempRestaurantList[0] + " ERROR: Unhandled status of search for: " + status);
     }
 
     // Found a match or unknown error, call Google API synchronously for the next request
@@ -116,6 +330,13 @@ function setMarkers(result) {
         title: result.name
     });
     markerArray.push(marker);
+}
+
+function removeAllMarkers(){
+    while (markerArray.length > 0) {
+        markerArray[0].setMap(null);
+        markerArray.splice(0,1);
+    }
 }
 
 function removeMarker(restaurantName){
@@ -141,6 +362,8 @@ function removeHighlights(){
     }
 }
 
+
+
 function setDefaultDateValue(){
     Date.prototype.toDateInputValue = (function() {
         var local = new Date(this);
@@ -151,6 +374,13 @@ function setDefaultDateValue(){
 }
 
 function searchAvailability(){
+    //error case if list hasn't been chosen
+    console.log(listName);
+    if(listName == undefined) {
+        document.getElementById("reservationTimes").innerHTML = "Please select or create a list";
+        return;
+    }
+
     //reset the reservations in case there was a previous search
     document.getElementById("reservationTimes").innerHTML = "";
     removeHighlights();
@@ -159,7 +389,7 @@ function searchAvailability(){
     var partySize = document.getElementById("partySize").value;
     var date = document.getElementById("datePicker").value;
     var time = document.getElementById("time").value;
-    var url = "http://nodejs-akhetan.rhcloud.com/?partySize=" + partySize + "&date=" + date + "&time=" + time;
+    var url = serverEndpoint+"/reservations?partySize=" + partySize + "&date=" + date + "&time=" + time + "&metroId=" + metroId;
 
     //show the spinner as results load
     $('#progress').show();
@@ -170,7 +400,7 @@ function searchAvailability(){
         url: url,
         dataType: "text",
         crossDomain: true,
-        success: myCallback,
+        success: availabilityCallback,
         error: function(xhr, ajaxOptions, thrownError) {
             console.log("Error status on callback: " + xhr.status);
             console.log("Error thrown: " + thrownError);
@@ -181,7 +411,7 @@ function searchAvailability(){
 
 }
 
-var myCallback = function(data) {
+var availabilityCallback = function(data) {
     //get the json objects for each request
     var responseArray = JSON.parse(data);
 

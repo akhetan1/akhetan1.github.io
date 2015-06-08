@@ -3,7 +3,7 @@ html {
 }
 
 body {
-    background: #f8f8f8 url(../images/foodiesfeed.com__DSC0066.jpg);
+    background: #f8f8f8 url(../images/foodiesfeed.com__DSC0066_2.jpg);
     background-size: 100% auto;
     font-family: 'PT Sans', Helvetica, Arial, sans-serif;
     font-size: 16px;
@@ -56,7 +56,40 @@ table, td {
 ul{
     margin: 0;
     padding: 0;
+    list-style-type: none;
 }
+
+ol {
+    list-style-type: none;
+    -webkit-padding-start: 0px;
+}
+
+ol.tags li{
+    margin:6px;
+    position:relative;
+    display:block;
+    overflow:hidden;
+    z-index:1;
+    border-bottom: 1px solid #868686;
+    cursor: pointer;
+}
+
+ol.tags li:hover{
+    background-color:darkgrey;
+    color:#fff;
+    z-index:1;
+    -webkit-border-radius:
+    2px;-moz-border-radius:2px;
+    border-radius:2px;
+}
+
+.group{
+    position:relative
+}
+.group:after{
+    content:".";display:block;height:0;clear:both;visibility:hidden
+}
+
 #map-canvas {
      display: block;
      width: 100%;
@@ -77,7 +110,7 @@ ul{
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
-#reservationsSearch {
+#reservationsSearch, #create, #addRemove, #delete {
     margin-left: 5px;
     background-color: hsl(0, 0%, 79%) !important;
     background-repeat: repeat-x;
@@ -85,6 +118,7 @@ ul{
     background-image: -webkit-linear-gradient(top, #868686, #c9c9c9);
     border-color:#868686;
     color: #333 !important;
+    font-weight: bold;
     text-shadow: 0 1px 1px rgba(255, 255, 255, 0.69);
     -webkit-font-smoothing: antialiased;
 }
@@ -121,6 +155,12 @@ ul{
     border: 0px;
 }
 
+.nav>li>a {
+    position: relative;
+    display: block;
+    padding: 10px 10px;
+}
+
 #scroller {
     height: 80%;
     padding: 10px;
@@ -145,4 +185,16 @@ ul{
 
 .row {
     height: 100%;
+}
+
+.modal-dialog {
+    color: black;
+}
+
+#saveError, #deleteError {
+    color: red;
+}
+
+.ui-widget {
+    font-size: 0.9em;
 }
