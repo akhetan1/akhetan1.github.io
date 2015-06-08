@@ -155,19 +155,21 @@ function writeFileCallback(){
 
 function deleteList() {
     document.getElementById("deleteError").innerHTML = "";
-    var deleteList = document.getElementById("deleteListName").value;
-    if(lists.indexOf(deleteList) <0 ) {
+    var deletedList = document.getElementById("deleteListName").value;
+    if(lists.indexOf(deletedList) <0 ) {
         document.getElementById("deleteError").innerHTML = "Please pick a valid list to delete";
     }
     else {
-        console.log("Deleting " + deleteList);
-        var url = serverEndpoint + "/deleteList?filename=" + deleteList;
+        console.log("Deleting " + deletedList);
+        var url = serverEndpoint + "/deleteList?filename=" + deletedList;
         $.ajax({
             type:'GET',
             url: url,
             dataType: "text",
             crossDomain: true,
-            success: deleteListCallback(deleteList),
+            success: function(){
+                deleteListCallback(deletedList);
+            },
             error: function(xhr, ajaxOptions, thrownError) {
                 console.log("error thrown: " + thrownError);
             }
@@ -175,17 +177,16 @@ function deleteList() {
     }
 }
 
-function deleteListCallback(deleteList){
-    document.getElementById("deleteListName").value = "";
+function deleteListCallback(deletedList){
     $('#deleteModal').modal('hide');
     loadListOptions();
-    if(listName == deleteList){
+    document.getElementById("deleteListName").value = "";
+    if(listName == deletedList){
         listName = "";
         removeAllMarkers();
         center = new google.maps.LatLng (39.5, -98.35);
         map.panTo(center);
         map.setZoom(3);
-
     }
 }
 
