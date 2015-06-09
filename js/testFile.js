@@ -149,7 +149,8 @@ function writeFileCallback(){
     recenterMap();
     loadListOptions();
     displayList();
-    getPlacesFromGoogle();
+    $("ul.nav li").removeClass("disabled").addClass('');
+    $("ul.nav li").removeClass("disabledTab");
     $('.nav-tabs a[href=#favorites]').tab('show');
 }
 
@@ -187,6 +188,10 @@ function deleteListCallback(deletedList){
         center = new google.maps.LatLng (39.5, -98.35);
         map.panTo(center);
         map.setZoom(3);
+        $('#favoritesList').removeClass('').addClass("disabled");
+        $('#favoritesList').addClass("disabledTab");
+        $('#reservationsList').removeClass('').addClass("disabled");
+        $('#reservationsList').addClass("disabledTab");
     }
 }
 
@@ -242,9 +247,11 @@ var returnListCallback = function(data){
     responseArray.shift();
     restaurantList = responseArray.slice(0);
     console.log(restaurantList);
-    displayList();
-    getPlacesFromGoogle();
     recenterMap();
+    displayList();
+    $("ul.nav li").removeClass("disabled").addClass('');
+    $("ul.nav li").removeClass("disabledTab");
+
     $('.nav-tabs a[href=#favorites]').tab('show');
 }
 
@@ -263,7 +270,7 @@ function recenterMap() {
     });
 }
 
-var recenterCallback = function(data){
+var recenterCallback = function(data) {
     var responseArray = JSON.parse(data);
     var lat = responseArray[0].Display.GeoLocation.Lat;
     var lng = responseArray[0].Display.GeoLocation.Lon;
@@ -275,6 +282,7 @@ var recenterCallback = function(data){
     for (var i = 0; i < responseArray[0].Results.Restaurants.length; i++) {
         restaurantsInMetro.push(responseArray[0].Results.Restaurants[i].Name);
     }
+    getPlacesFromGoogle();
 };
 
 function displayList() {

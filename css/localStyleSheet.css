@@ -198,3 +198,7 @@ ol.tags li:hover{
 .ui-widget {
     font-size: 0.9em;
 }
+
+.disabledTab{
+    pointer-events: none;
+}
