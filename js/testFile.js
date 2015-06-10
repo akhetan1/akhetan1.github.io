@@ -11,7 +11,6 @@ var restaurantsInMetro = [];
 var serverEndpoint = "http://nodejs-akhetan.rhcloud.com";
 //var serverEndpoint = "http://localhost:1234";
 
-
 function initialize(){
     var mapCanvas=document.getElementById("map-canvas");
     center = new google.maps.LatLng (39.5, -98.35);
@@ -40,7 +39,6 @@ function initialize(){
             map.setZoom(15);
         }
     });
-    displayList();
     loadListOptions();
 }
 function enableAutocomplete(){
@@ -65,7 +63,6 @@ function addRemoveRestaurant(){
     //add restaurant to list and write to server
     if (restaurantList.indexOf(restaurantName) == -1){
         url = serverEndpoint+"/addRestaurant?listName=" + listName + "&restaurantName="+restaurantName;
-        console.log(url);
 
         $.ajax({
             type: 'POST',
@@ -86,7 +83,6 @@ function addRemoveRestaurant(){
     //remove restaurant from list and update server file
     } else {
         url = serverEndpoint + "/removeRestaurant?listName=" + listName + "&restaurantName=" +restaurantName;
-        console.log("Test1: " + restaurantList);
         $.ajax({
             type: 'POST',
             url: url,
@@ -148,7 +144,6 @@ function writeFileCallback(){
     restaurantsInMetro = [];
     recenterMap();
     loadListOptions();
-    displayList();
     $("ul.nav li").removeClass("disabled").addClass('');
     $("ul.nav li").removeClass("disabledTab");
     $('.nav-tabs a[href=#favorites]').tab('show');
@@ -161,7 +156,6 @@ function deleteList() {
         document.getElementById("deleteError").innerHTML = "Please pick a valid list to delete";
     }
     else {
-        console.log("Deleting " + deletedList);
         var url = serverEndpoint + "/deleteList?filename=" + deletedList;
         $.ajax({
             type:'GET',
@@ -243,12 +237,9 @@ function loadList(listname){
 var returnListCallback = function(data){
     var responseArray = data.split(",");
     metroId = responseArray[0];
-    console.log("In returnListcallback, metroId: " + metroId);
     responseArray.shift();
     restaurantList = responseArray.slice(0);
-    console.log(restaurantList);
     recenterMap();
-    displayList();
     $("ul.nav li").removeClass("disabled").addClass('');
     $("ul.nav li").removeClass("disabledTab");
 
@@ -282,6 +273,7 @@ var recenterCallback = function(data) {
     for (var i = 0; i < responseArray[0].Results.Restaurants.length; i++) {
         restaurantsInMetro.push(responseArray[0].Results.Restaurants[i].Name);
     }
+    displayList();
     getPlacesFromGoogle();
 };
 
@@ -293,9 +285,16 @@ function displayList() {
         tempRestaurantList = restaurantList.slice(0);
         var list = '';
         for (var i in restaurantList) {
-            list += "<li>";
-            list += restaurantList[i];
-            list += "</li>";
+            if(restaurantsInMetro.indexOf(restaurantList[i]) >= 0) {
+                list += "<li><i><b>";
+                list += restaurantList[i];
+                list += "</i></b></li>";
+            }
+            else {
+                list += "<li>";
+                list += restaurantList[i];
+                list += "</li>";
+            }
         }
         document.getElementById("List").innerHTML = list;
     }
@@ -394,7 +393,6 @@ function setDefaultDateValue(){
 
 function searchAvailability(){
     //error case if list hasn't been chosen
-    console.log(listName);
     if(listName == undefined) {
         document.getElementById("reservationTimes").innerHTML = "Please select or create a list";
         return;
@@ -465,6 +463,9 @@ var availabilityCallback = function(data) {
             }
         });
         $('#progress').hide();
+        if(outputStr == ""){
+            outputStr = "No available reservations";
+        }
         document.getElementById("reservationTimes").innerHTML = outputStr;
     }
 }
