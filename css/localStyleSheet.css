@@ -176,6 +176,9 @@ ol.tags li:hover{
     overflow-x: hidden;
     overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
 }
+#loading {
+    padding: 12px;
+}
 
 .panel {
     background-color: #2d2d2d;

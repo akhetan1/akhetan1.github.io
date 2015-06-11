@@ -122,6 +122,8 @@ function createNewList(){
     }
     else {
         $('#createModal').modal('hide');
+        $('#loading').show();
+        document.getElementById("List").innerHTML="";
         var listObject = {
             metroId: metroId,
             listName: listName
@@ -134,6 +136,7 @@ function createNewList(){
             success: writeFileCallback,
             error: function(xhr,ajaxOptions,thrownError){
                 console.log("error thrown: " + thrownError + " Status: " + JSON.stringify(xhr));
+                $('#loading').hide();
             }
         });
     }
@@ -217,6 +220,8 @@ var returnOptionsCallback = function(data) {
 
 
 function loadList(listname){
+    $('#loading').show()
+    document.getElementById("List").innerHTML="";
     listName = listname;
     var url = serverEndpoint +"/loadlist?listname=" + listName;
     document.getElementById("reservationTimes").innerHTML = "";
@@ -230,6 +235,7 @@ function loadList(listname){
         success: returnListCallback,
         error: function(xhr, ajaxOptions, thrownError) {
             console.log("error thrown: " + thrownError);
+            $('#loading').hide();
         }
     })
 }
@@ -263,18 +269,19 @@ function recenterMap() {
 
 var recenterCallback = function(data) {
     var responseArray = JSON.parse(data);
-    var lat = responseArray[0].Display.GeoLocation.Lat;
-    var lng = responseArray[0].Display.GeoLocation.Lon;
+    var lat = responseArray.Display.GeoLocation.Lat;
+    var lng = responseArray.Display.GeoLocation.Lon;
     center = new google.maps.LatLng(lat, lng);
     map.panTo(center);
     map.setZoom(12);
 
     //read in and store full list of restaurants
-    for (var i = 0; i < responseArray[0].Results.Restaurants.length; i++) {
-        restaurantsInMetro.push(responseArray[0].Results.Restaurants[i].Name);
+    for (var i = 0; i < responseArray.Results.Restaurants.length; i++) {
+        restaurantsInMetro.push(responseArray.Results.Restaurants[i].Name);
     }
     displayList();
     getPlacesFromGoogle();
+    $('#loading').hide();
 };
 
 function displayList() {
@@ -432,9 +439,9 @@ var availabilityCallback = function(data) {
     //get the json objects for each request
     var responseArray = JSON.parse(data);
 
-    if(responseArray[0] == "No search results"){
+    if(responseArray.message == "No search results"){
         $('#progress').hide();
-        document.getElementById("reservationTimes").innerHTML =responseArray[0];
+        document.getElementById("reservationTimes").innerHTML =responseArray;
     }
     else {
         //search each request
@@ -442,8 +449,8 @@ var availabilityCallback = function(data) {
         var lookup = {};
         var partySize = document.getElementById("partySize").value;
 
-        for (var i = 0; i < responseArray[0].Results.Restaurants.length; i++) {
-            lookup[responseArray[0].Results.Restaurants[i].Name] = responseArray[0].Results.Restaurants[i];
+        for (var i = 0; i < responseArray.Results.Restaurants.length; i++) {
+            lookup[responseArray.Results.Restaurants[i].Name] = responseArray.Results.Restaurants[i];
         }
 
         restaurantList.forEach(function (restaurant) {
