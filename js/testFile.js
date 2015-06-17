@@ -42,6 +42,7 @@ function initialize(){
     loadListOptions();
 }
 function enableAutocomplete(){
+    console.log("in enable autocomplete function");
     $( "#restaurantInput" ).autocomplete({
         /*Source refers to the list of fruits that are available in the auto complete list. */
         source:restaurantsInMetro,
