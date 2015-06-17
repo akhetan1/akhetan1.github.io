@@ -59,6 +59,7 @@ function addRemoveRestaurant(){
         return;
     }
     var restaurantName = document.getElementById("restaurantInput").value;
+    restaurantName= restaurantName.trim();
     var url;
 
     //add restaurant to list and write to server
