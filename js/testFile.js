@@ -58,13 +58,13 @@ function addRemoveRestaurant(){
         document.getElementById("List").innerHTML = "Please select or create a list";
         return;
     }
-    var restaurantName = document.getElementById("restaurantInput").value;
-    restaurantName= restaurantName.trim();
+    var restaurantNameTemp = document.getElementById("restaurantInput").value;
+    var restaurantName = restaurantNameTemp.trim();
     var url;
 
     //add restaurant to list and write to server
     if (restaurantList.indexOf(restaurantName) == -1){
-        url = serverEndpoint+"/addRestaurant?listName=" + listName + "&restaurantName="+restaurantName;
+        url = serverEndpoint+"/addRestaurant?listName=" + listName + "&restaurantName="+encodeURIComponent(restaurantName);
 
         $.ajax({
             type: 'POST',
@@ -279,7 +279,7 @@ var recenterCallback = function(data) {
 
     //read in and store full list of restaurants
     for (var i = 0; i < responseArray.Results.Restaurants.length; i++) {
-        restaurantsInMetro.push(responseArray.Results.Restaurants[i].Name);
+        restaurantsInMetro.push(responseArray.Results.Restaurants[i].Name.trim());
     }
     displayList();
     getPlacesFromGoogle();
@@ -294,7 +294,7 @@ function displayList() {
         tempRestaurantList = restaurantList.slice(0);
         var list = '';
         for (var i in restaurantList) {
-            if(restaurantsInMetro.indexOf(restaurantList[i]) >= 0) {
+            if(restaurantsInMetro.indexOf(restaurantList[i].trim()) >= 0) {
                 list += "<li><i><b>";
                 list += restaurantList[i];
                 list += "</i></b></li>";
