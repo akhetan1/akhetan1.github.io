@@ -8,8 +8,8 @@ var autocomplete;
 var markerArray = [];
 var metroId;
 var restaurantsInMetro = [];
-var serverEndpoint = "http://nodejs-akhetan.rhcloud.com";
-//var serverEndpoint = "http://localhost:1234";
+var serverEndpoint = "https://nodejs-akhetan.rhcloud.com";
+//var serverEndpoint = "http://localhost:8080";
 
 function initialize(){
     var mapCanvas=document.getElementById("map-canvas");
