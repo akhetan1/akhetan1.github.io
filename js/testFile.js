@@ -271,8 +271,8 @@ function recenterMap() {
 
 var recenterCallback = function(data) {
     var responseArray = JSON.parse(data);
-    var lat = responseArray.Display.GeoLocation.Lat;
-    var lng = responseArray.Display.GeoLocation.Lon;
+    var lat = responseArray.Display.GeoLocation.Latitude;
+    var lng = responseArray.Display.GeoLocation.Longitude;
     center = new google.maps.LatLng(lat, lng);
     map.panTo(center);
     map.setZoom(12);
